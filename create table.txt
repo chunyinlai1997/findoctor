@@ -1,0 +1,119 @@
+CREATE TABLE Users (
+    id int NOT NULL AUTO_INCREMENT,
+    lastname varchar(255),
+    firstname varchar(255),
+	phone varchar(255),
+	email varchar(255),
+	password varchar(255),
+	role ENUM('admin','patient','doctor'),
+	status ENUM('active','inactive','blocked'),
+	verified boolean,
+	verify_hash varchar(255),
+	gender char(20),
+	profile_image varchar(255),
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE Patient (
+	user_id int NOT NULL,
+    date_of_birth date,
+    address varchar(255),
+    district varchar(255),
+	hkid varchar(255),
+	PRIMARY KEY (user_id),
+    FOREIGN KEY (user_id) REFERENCES Users(id)
+);
+
+CREATE TABLE Token (
+    user_id int NOT NULL ,
+	role ENUM('admin','patient','doctor'),
+	token_id int NOT NULL AUTO_INCREMENT,
+	token varchar(255),
+	ip_address varchar(255),
+	PRIMARY KEY (`token_id`, `user_id`),
+    FOREIGN KEY (user_id) REFERENCES Users(id)
+);
+
+CREATE TABLE Admin (
+	user_id int NOT NULL,
+	PRIMARY KEY (user_id),
+    FOREIGN KEY (user_id) REFERENCES Users(id)
+);
+
+CREATE TABLE Payments (
+    id int NOT NULL AUTO_INCREMENT,
+    user_id int,
+    date_time datetime,
+    medium varchar(255),
+    info varchar(255),
+	amount int,
+	PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES Users(id)
+);
+
+CREATE TABLE Clinics (
+    branch_id int NOT NULL AUTO_INCREMENT,
+	name varchar(255),
+    location_key1 varchar(255),
+    location_key2 varchar(255),
+    district varchar(255),
+	address varchar(255),
+	phone int,
+	email varchar(255),
+	PRIMARY KEY (branch_id)
+);
+
+CREATE TABLE Appointments (
+	aid int NOT NULL AUTO_INCREMENT,
+	doctor_id int NOT NULL,
+    patient_id int NOT NULL,
+	date date NOT NULL,
+    time time NOT NULL,
+    branch_id varchar(255) NOT NULL,
+	treatment varchar(255) NOT NULL,
+	payment_id int,
+	followup ENUM('Yes', 'No'),
+	status ENUM('booked', 'cancelled','completed','abesent'),
+	PRIMARY KEY (aid)
+	
+);
+
+
+
+CREATE TABLE Patient_Records (
+	id int NOT NULL AUTO_INCREMENT,
+	aid int NOT NULL,
+	doctor_comment varchar(255),
+    prescription varchar(255),
+	require_followup ENUM('Yes', 'No'),
+	referrals ENUM('Yes', 'No'),
+	PRIMARY KEY (id,aid),
+	FOREIGN KEY (aid) REFERENCES Users(id)
+);
+
+CREATE TABLE Unavaliable_Time (
+	id int NOT NULL AUTO_INCREMENT,
+	doctor_id int NOT NULL,
+	date date,
+    time time,
+	PRIMARY KEY (id),
+	FOREIGN KEY (doctor_id) REFERENCES Users(id)
+);
+
+CREATE TABLE Treatments (
+	spec varchar(255),
+	treatment varchar(255),
+	fee int,
+	PRIMARY KEY('spec', 'treatment')
+);
+
+CREATE TABLE Doctor (
+	user_id int NOT NULL,
+    branch_id int,
+	rating varchar(255),
+    specialization varchar(255),
+	PRIMARY KEY (user_id),
+    FOREIGN KEY (user_id) REFERENCES Users(id)
+);
+
+	
